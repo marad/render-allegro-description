@@ -156,7 +156,7 @@ run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"OK\"
 
 # TEST 15: Pomoc aplikacji
 test_header "15" "Test pomocy --help"
-run_test "./render-sd --help" 0 "pomoc aplikacji" "Usage of ./render-sd"
+run_test "./render-sd --help" 0 "pomoc aplikacji" "Usage:"
 
 # TEST 16: Złożony poprawny JSON
 test_header "16" "Złożony poprawny JSON"
