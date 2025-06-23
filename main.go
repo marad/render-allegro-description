@@ -10,31 +10,7 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-func RenderSd(jsonData string, out io.Writer, fullPage bool) error {
-	desc, err := ParseDescription(jsonData)
-	if err != nil {
-		return fmt.Errorf("błąd podczas parsowania JSON: %v", err)
-	}
-
-	ctx := context.Background()
-	var component templ.Component
-
-	if fullPage {
-		component = descriptionPage(desc)
-	} else {
-		component = description(desc)
-	}
-
-	err = component.Render(ctx, out)
-	if err != nil {
-		return fmt.Errorf("błąd podczas renderowania HTML: %v", err)
-	}
-
-	return nil
-}
-
-func main() {
-	usage := `Render SD - narzędzie do renderowania opisów na podstawie JSON
+const usage = `Render SD - narzędzie do renderowania opisów na podstawie JSON
 
 Usage:
   render-sd [--file=<path> | -f <path>] [--no-page]
@@ -45,6 +21,7 @@ Options:
   --no-page                 Renderuj tylko zawartość opisu bez pełnej strony HTML
   -h, --help                Pokaż tę pomoc`
 
+func main() {
 	opts, err := docopt.ParseDoc(usage)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Błąd podczas parsowania argumentów: %v\n", err)
@@ -80,4 +57,27 @@ Options:
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
+}
+
+func RenderSd(jsonData string, out io.Writer, fullPage bool) error {
+	desc, err := ParseDescription(jsonData)
+	if err != nil {
+		return fmt.Errorf("błąd podczas parsowania JSON: %v", err)
+	}
+
+	ctx := context.Background()
+	var component templ.Component
+
+	if fullPage {
+		component = descriptionPage(desc)
+	} else {
+		component = description(desc)
+	}
+
+	err = component.Render(ctx, out)
+	if err != nil {
+		return fmt.Errorf("błąd podczas renderowania HTML: %v", err)
+	}
+
+	return nil
 }
