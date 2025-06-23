@@ -26,7 +26,6 @@ FAILED_TESTS=0
 # Funkcja do wyświetlania nagłówka testu
 test_header() {
     echo -e "\n${BLUE}=== TEST $1: $2 ===${NC}"
-    TOTAL_TESTS=$((TOTAL_TESTS + 1))
 }
 
 # Funkcja do sprawdzania wyniku testu
@@ -60,6 +59,7 @@ check_result() {
 
 # Funkcja do uruchamiania testu
 run_test() {
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
     local command="$1"
     local expected_exit_code=$2
     local test_name="$3"
@@ -120,7 +120,7 @@ run_test "echo '{}' | ./render-sd" 0 "pusty JSON" "<!doctype html>"
 
 # TEST 6: Puste sections
 test_header "6" "Puste sections"
-run_test "echo '{\"sections\":[]}' | ./render-sd" 0 "puste sections" "<main><section></section></main>"
+run_test "echo '{\"sections\":[]}' | ./render-sd" 0 "puste sections" "<div class=\"main\"><div class=\"section\"></div></div>"
 
 # TEST 7: Nieistniejący plik
 test_header "7" "Nieistniejący plik"
@@ -191,7 +191,7 @@ run_test "./render-sd -f complex_test.json" 0 "złożony JSON" "<div class=\"row
 
 # TEST 17: Test flagi --no-page ze stdin
 test_header "17" "Test flagi --no-page ze stdin"
-run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"<p>Test no-page</p>\"}]}]}' | ./render-sd --no-page" 0 "renderowanie bez pełnej strony" "<div class=\"row\"><div class=\"item\"><p>Test no-page</p></div></div>"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"<p>Test no-page</p>\"}]}]}' | ./render-sd --no-page" 0 "renderowanie bez pełnej strony" "<div class=\"row\"><div class=\"item item-text\"><p>Test no-page</p></div></div>"
 
 # TEST 18: Test flagi --no-page z plikiem
 test_header "18" "Test flagi --no-page z plikiem"
