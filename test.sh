@@ -124,11 +124,11 @@ run_test "echo '{\"sections\":[]}' | ./render-sd" 0 "puste sections" "<main><sec
 
 # TEST 7: Nieistniejący plik
 test_header "7" "Nieistniejący plik"
-run_test "./render-sd --file nieistniejacy_plik.json" 1 "nieistniejący plik" "Błąd podczas wczytywania pliku"
+run_test "./render-sd --file nieistniejacy_plik.json" 1 "nieistniejący plik" "Error reading file"
 
 # TEST 8: Nieprawidłowy JSON
 test_header "8" "Nieprawidłowy JSON"
-run_test "echo '{\"sections\":invalid}' | ./render-sd" 1 "nieprawidłowy JSON" "błąd podczas parsowania JSON"
+run_test "echo '{\"sections\":invalid}' | ./render-sd" 1 "nieprawidłowy JSON" "error parsing JSON"
 
 # TEST 9: Pusty string
 test_header "9" "Pusty string ze stdin"
