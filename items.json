@@ -1,0 +1,6 @@
+[
+  { "type": "TEXT", "content": "<h1>Tytuł testowy</h1><p>Opis testowy</p>" },
+  { "type": "IMAGE", "url": "https://example.com/test.jpg" },
+  { "type": "TEXT", "content": "<p>Kolejna sekcja tekstowa</p>" },
+  { "type": "TEXT", "content": "<p>Jeszcze jeden tekst</p>" }
+]

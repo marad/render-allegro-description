@@ -217,20 +217,34 @@ test_header "19" "Porównanie: pełna strona vs --no-page"
 # Test że bez --no-page zawiera <!doctype html>
 run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"<p>Test</p>\"}]}]}' | ./render-sd" 0 "pełna strona zawiera doctype" "<!doctype html>"
 
+# TEST 20: Tryb --build-sections z płaską listą itemów
+test_header "20" "Tryb --build-sections z płaską listą itemów"
+cat > items_test.json << 'EOF'
+[
+  { "type": "TEXT", "content": "<h1>Tytuł testowy</h1><p>Opis testowy</p>" },
+  { "type": "IMAGE", "url": "https://example.com/test.jpg" },
+  { "type": "TEXT", "content": "<p>Kolejna sekcja tekstowa</p>" },
+  { "type": "TEXT", "content": "<p>Jeszcze jeden tekst</p>" }
+]
+EOF
+
+run_test "./render-sd --file items_test.json --build-sections" 0 "build-sections z płaską listą" "<h1>Tytuł testowy</h1>"
+run_test "./render-sd --file items_test.json --build-sections" 0 "build-sections - sekcje" "<div class=\"row\">"
+
 # Czyszczenie plików testowych
-rm -f test_file.json complex_test.json no_page_test.json no_page_test.json
+rm -f test_file.json complex_test.json no_page_test.json no_page_test.json items_test.json
 
 # Podsumowanie wyników
 echo -e "\n${BLUE}📊 PODSUMOWANIE TESTÓW${NC}"
 echo -e "${BLUE}===================${NC}"
 echo -e "Łącznie testów: $TOTAL_TESTS"
 echo -e "${GREEN}Zakończone sukcesem: $PASSED_TESTS${NC}"
-echo -e "${RED}Zakończone błędem: $FAILED_TESTS${NC}"
 
 if [ $FAILED_TESTS -eq 0 ]; then
     echo -e "\n${GREEN}🎉 Wszystkie testy przeszły pomyślnie!${NC}"
     exit 0
 else
+    echo -e "${RED}Zakończone błędem: $FAILED_TESTS${NC}"
     echo -e "\n${RED}💥 Niektóre testy nie powiodły się!${NC}"
     exit 1
 fi

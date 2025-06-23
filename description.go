@@ -19,18 +19,48 @@ type Description struct {
 	Sections []Section `json:"sections"`
 }
 
+func ParseItemList(data string) ([]Item, error) {
+	var items []Item
+
+	// Sprawdzenie czy dane nie są puste
+	if len(data) == 0 {
+		return items, fmt.Errorf("no JSON data provided")
+	}
+
+	// Parsowanie JSON z obsługą błędów
+	err := json.Unmarshal([]byte(data), &items)
+	if err != nil {
+		return items, fmt.Errorf("invalid JSON: %v", err)
+	}
+
+	// Walidacja elementów
+	for i, item := range items {
+		if item.Type == "" {
+			return items, fmt.Errorf("item %d has no type specified", i+1)
+		}
+		if item.Type == "IMAGE" && item.Url == "" {
+			return items, fmt.Errorf("IMAGE item %d has no URL", i+1)
+		}
+		if item.Type == "TEXT" && item.Content == "" {
+			return items, fmt.Errorf("TEXT item %d has no content", i+1)
+		}
+	}
+
+	return items, nil
+}
+
 func ParseDescription(data string) (Description, error) {
 	var desc Description
 
 	// Sprawdzenie czy dane nie są puste
 	if len(data) == 0 {
-		return desc, fmt.Errorf("brak danych JSON")
+		return desc, fmt.Errorf("no JSON data provided")
 	}
 
 	// Parsowanie JSON z obsługą błędów
 	err := json.Unmarshal([]byte(data), &desc)
 	if err != nil {
-		return desc, fmt.Errorf("nieprawidłowy JSON: %v", err)
+		return desc, fmt.Errorf("invalid JSON: %v", err)
 	}
 
 	// Walidacja podstawowej struktury
@@ -50,17 +80,17 @@ func ParseDescription(data string) (Description, error) {
 			switch item.Type {
 			case "TEXT":
 				if item.Content == "" {
-					return desc, fmt.Errorf("element TEXT w sekcji %d nie ma zawartości", i+1)
+					return desc, fmt.Errorf("TEXT item in section %d has no content", i+1)
 				}
 			case "IMAGE":
 				if item.Url == "" {
-					return desc, fmt.Errorf("element IMAGE w sekcji %d nie ma URL", i+1)
+					return desc, fmt.Errorf("IMAGE item in section %d has no URL", i+1)
 				}
 			case "":
-				return desc, fmt.Errorf("element w sekcji %d nie ma określonego typu", i+1)
+				return desc, fmt.Errorf("item in section %d has no type specified", i+1)
 			default:
 				// Nieznane typy są akceptowane, ale logujemy ostrzeżenie
-				fmt.Printf("Ostrzeżenie: nieznany typ elementu '%s' w sekcji %d\n", item.Type, i+1)
+				fmt.Printf("Warning: unknown item type '%s' in section %d\n", item.Type, i+1)
 			}
 		}
 	}

@@ -13,12 +13,13 @@ import (
 const usage = `Render SD - tool for rendering descriptions based on JSON
 
 Usage:
-  render-sd [--file=<path> | -f <path>] [--no-page]
+  render-sd [--file=<path> | -f <path>] [--no-page] [--build-sections]
   render-sd -h | --help
 
 Options:
   -f <path>, --file=<path>  Path to JSON file (if not provided, reads from stdin)
   --no-page                 Render only description content without full HTML page
+  --build-sections          Build sections from a flat item list 
   -h, --help                Show this help`
 
 func main() {
@@ -30,6 +31,7 @@ func main() {
 
 	filePath, _ := opts.String("--file")
 	noPage, _ := opts.Bool("--no-page")
+	buildSections, _ := opts.Bool("--build-sections")
 
 	var jsonData string
 
@@ -52,7 +54,7 @@ func main() {
 	}
 
 	// Reading description from JSON
-	desc, err := ReadDescription(jsonData)
+	desc, err := ReadDescription(jsonData, buildSections)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading description: %v\n", err)
 		os.Exit(1)
@@ -66,7 +68,15 @@ func main() {
 	}
 }
 
-func ReadDescription(jsonData string) (Description, error) {
+func ReadDescription(jsonData string, buildSections bool) (Description, error) {
+	if buildSections {
+		items, err := ParseItemList(jsonData)
+		if err != nil {
+			return Description{}, fmt.Errorf("error parsing JSON: %v", err)
+		}
+		sections := BuildSections(items)
+		return Description{Sections: sections}, nil
+	}
 	desc, err := ParseDescription(jsonData)
 	if err != nil {
 		return Description{}, fmt.Errorf("error parsing JSON: %v", err)
