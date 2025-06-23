@@ -51,20 +51,30 @@ func main() {
 		jsonData = string(stdinContent)
 	}
 
+	// Reading description from JSON
+	desc, err := ReadDescription(jsonData)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading description: %v\n", err)
+		os.Exit(1)
+	}
+
 	// Rendering JSON to HTML
-	err = RenderSd(jsonData, os.Stdout, !noPage)
+	err = RenderSd(desc, os.Stdout, !noPage)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
 
-func RenderSd(jsonData string, out io.Writer, fullPage bool) error {
+func ReadDescription(jsonData string) (Description, error) {
 	desc, err := ParseDescription(jsonData)
 	if err != nil {
-		return fmt.Errorf("error parsing JSON: %v", err)
+		return Description{}, fmt.Errorf("error parsing JSON: %v", err)
 	}
+	return desc, nil
+}
 
+func RenderSd(desc Description, out io.Writer, fullPage bool) error {
 	ctx := context.Background()
 	var component templ.Component
 
@@ -74,7 +84,7 @@ func RenderSd(jsonData string, out io.Writer, fullPage bool) error {
 		component = description(desc)
 	}
 
-	err = component.Render(ctx, out)
+	err := component.Render(ctx, out)
 	if err != nil {
 		return fmt.Errorf("error rendering HTML: %v", err)
 	}

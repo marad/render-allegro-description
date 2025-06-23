@@ -132,27 +132,27 @@ run_test "echo '{\"sections\":invalid}' | ./render-sd" 1 "nieprawidłowy JSON" "
 
 # TEST 9: Pusty string
 test_header "9" "Pusty string ze stdin"
-run_test "echo -n '' | ./render-sd" 1 "pusty string" "brak danych JSON"
+run_test "echo -n '' | ./render-sd" 1 "pusty string" "Error reading description: error parsing JSON: no JSON data provided"
 
 # TEST 10: Element TEXT bez zawartości
 test_header "10" "Element TEXT bez zawartości"
-run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"\"}]}]}' | ./render-sd" 1 "TEXT bez zawartości" "element TEXT w sekcji 1 nie ma zawartości"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"\"}]}]}' | ./render-sd" 1 "TEXT bez zawartości" "Error reading description: error parsing JSON: TEXT item in section 1 has no content"
 
 # TEST 11: Element IMAGE bez URL
 test_header "11" "Element IMAGE bez URL"
-run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"IMAGE\",\"url\":\"\"}]}]}' | ./render-sd" 1 "IMAGE bez URL" "element IMAGE w sekcji 1 nie ma URL"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"IMAGE\",\"url\":\"\"}]}]}' | ./render-sd" 1 "IMAGE bez URL" "Error reading description: error parsing JSON: IMAGE item in section 1 has no URL"
 
 # TEST 12: Element bez typu
 test_header "12" "Element bez typu"
-run_test "echo '{\"sections\":[{\"items\":[{\"content\":\"test\"}]}]}' | ./render-sd" 1 "element bez typu" "element w sekcji 1 nie ma określonego typu"
+run_test "echo '{\"sections\":[{\"items\":[{\"content\":\"test\"}]}]}' | ./render-sd" 1 "element bez typu" "Error reading description: error parsing JSON: item in section 1 has no type specified"
 
 # TEST 13: Nieznany typ elementu (powinien działać z ostrzeżeniem)
 test_header "13" "Nieznany typ elementu"
-run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"UNKNOWN\",\"content\":\"test\"}]}]}' | ./render-sd" 0 "nieznany typ" "Ostrzeżenie: nieznany typ elementu"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"UNKNOWN\",\"content\":\"test\"}]}]}' | ./render-sd" 0 "nieznany typ" "Warning: unknown item type 'UNKNOWN' in section 1"
 
 # TEST 14: Wielosekcyjny JSON z błędem
 test_header "14" "Wielosekcyjny JSON z błędem w drugiej sekcji"
-run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"OK\"}]},{\"items\":[{\"type\":\"IMAGE\",\"url\":\"\"}]}]}' | ./render-sd" 1 "błąd w drugiej sekcji" "element IMAGE w sekcji 2 nie ma URL"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"OK\"}]},{\"items\":[{\"type\":\"IMAGE\",\"url\":\"\"}]}]}' | ./render-sd" 1 "błąd w drugiej sekcji" "Error reading description: error parsing JSON: IMAGE item in section 2 has no URL"
 
 # TEST 15: Pomoc aplikacji
 test_header "15" "Test pomocy --help"
