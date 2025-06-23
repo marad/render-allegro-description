@@ -43,7 +43,7 @@ cat test.json | ./render-sd
 ## 📋 Składnia
 
 ```
-render-sd [--file=<path> | -f <path>] [--no-page]
+render-sd [--file=<path> | -f <path>] [--no-page] [--build-sections]
 render-sd -h | --help
 ```
 
@@ -53,6 +53,7 @@ render-sd -h | --help
 |-------|------|
 | `-f <path>`, `--file=<path>` | Ścieżka do pliku JSON (jeśli nie podano, czyta ze stdin) |
 | `--no-page` | Renderuje tylko zawartość opisu bez pełnej strony HTML |
+| `--build-sections` | Buduje sekcje na podstawie płaskiej listy elementów (przydatne, gdy wejściowy JSON to lista `items` zamiast sekcji) |
 | `-h`, `--help` | Pokazuje pomoc |
 
 ## 📊 Format danych JSON
@@ -82,6 +83,21 @@ Narzędzie oczekuje danych JSON w formacie Allegro Standardized Description:
 
 - **TEXT** - zawartość HTML w postaci tekstu
 - **IMAGE** - obraz z podanym URL
+
+### Obsługa płaskiej listy `items` (`--build-sections`)
+
+Jeśli Twój plik JSON zawiera tylko listę `items` (bez sekcji), możesz użyć flagi `--build-sections`, aby automatycznie zbudować sekcje z tej listy. Może to być przydatne w przypadku użycia biblioteki [Convert Description](https://github.com/allegro/convert-description).
+
+```json
+[
+  { "type": "TEXT", "content": "<h1>Tytuł</h1>" },
+  { "type": "IMAGE", "url": "https://example.com/img.jpg" }
+]
+```
+
+```bash
+./render-sd --file items.json --build-sections
+```
 
 ## 🧪 Testowanie
 
