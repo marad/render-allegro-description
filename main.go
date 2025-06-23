@@ -6,19 +6,24 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/a-h/templ"
 )
 
-// RenderSd konwertuje JSON na HTML i zapisuje wynik do podanego writer'a
-func RenderSd(jsonData string, out io.Writer) error {
-	// Parsowanie JSON do struktury Description
+func RenderSd(jsonData string, out io.Writer, fullPage bool) error {
 	desc, err := ParseDescription(jsonData)
 	if err != nil {
 		return fmt.Errorf("błąd podczas parsowania JSON: %v", err)
 	}
 
-	// Renderowanie do HTML
 	ctx := context.Background()
-	component := descriptionPage(desc)
+	var component templ.Component
+
+	if fullPage {
+		component = descriptionPage(desc)
+	} else {
+		component = description(desc)
+	}
 
 	err = component.Render(ctx, out)
 	if err != nil {
@@ -30,8 +35,10 @@ func RenderSd(jsonData string, out io.Writer) error {
 
 func main() {
 	var filePath string
+	var noPage bool
 	flag.StringVar(&filePath, "file", "", "Ścieżka do pliku JSON (jeśli nie podano, wczytuje z stdin)")
 	flag.StringVar(&filePath, "f", "", "Ścieżka do pliku JSON (skrót)")
+	flag.BoolVar(&noPage, "no-page", false, "Renderuj tylko zawartość opisu bez pełnej strony HTML")
 	flag.Parse()
 
 	var jsonData string
@@ -55,8 +62,8 @@ func main() {
 		jsonData = string(stdinContent)
 	}
 
-	// Parsowanie JSON do struktury Description
-	err = RenderSd(jsonData, os.Stdout)
+	// Renderowanie JSON do HTML
+	err = RenderSd(jsonData, os.Stdout, !noPage)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)

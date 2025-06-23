@@ -189,8 +189,36 @@ EOF
 
 run_test "./render-sd -f complex_test.json" 0 "złożony JSON" "<div class=\"row\">"
 
+# TEST 17: Test flagi --no-page ze stdin
+test_header "17" "Test flagi --no-page ze stdin"
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"<p>Test no-page</p>\"}]}]}' | ./render-sd --no-page" 0 "renderowanie bez pełnej strony" "<div class=\"row\"><div class=\"item\"><p>Test no-page</p></div></div>"
+
+# TEST 18: Test flagi --no-page z plikiem
+test_header "18" "Test flagi --no-page z plikiem"
+cat > no_page_test.json << 'EOF'
+{
+  "sections": [
+    {
+      "items": [
+        {
+          "type": "TEXT",
+          "content": "<h2>Bez pełnej strony</h2>"
+        }
+      ]
+    }
+  ]
+}
+EOF
+
+run_test "./render-sd --no-page -f no_page_test.json" 0 "no-page z pliku" "<h2>Bez pełnej strony</h2>"
+
+# TEST 19: Porównanie z pełną stroną vs --no-page
+test_header "19" "Porównanie: pełna strona vs --no-page"
+# Test że bez --no-page zawiera <!doctype html>
+run_test "echo '{\"sections\":[{\"items\":[{\"type\":\"TEXT\",\"content\":\"<p>Test</p>\"}]}]}' | ./render-sd" 0 "pełna strona zawiera doctype" "<!doctype html>"
+
 # Czyszczenie plików testowych
-rm -f test_file.json complex_test.json
+rm -f test_file.json complex_test.json no_page_test.json no_page_test.json
 
 # Podsumowanie wyników
 echo -e "\n${BLUE}📊 PODSUMOWANIE TESTÓW${NC}"
