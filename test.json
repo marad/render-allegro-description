@@ -1,0 +1,24 @@
+{
+  "sections": [
+    {
+      "items": [
+        {
+          "type": "TEXT",
+          "content": "<h1>Tytuł produktu</h1><p>Opis produktu z pliku</p>"
+        },
+        {
+          "type": "IMAGE",
+          "url": "https://example.com/product.jpg"
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "type": "TEXT",
+          "content": "<p>Druga sekcja</p>"
+        }
+      ]
+    }
+  ]
+}

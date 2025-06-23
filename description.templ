@@ -1,0 +1,42 @@
+package main 
+
+templ description(desc Description) {
+  for _, section := range desc.Sections {
+    <div class="row">
+      for _, item := range section.Items {
+        <div class="item">
+          switch item.Type {
+            case "TEXT":
+              @templ.Raw(item.Content)
+            case "IMAGE":
+              <img src={item.Url} alt="Image"/>
+          }
+        </div>
+      }
+    </div>
+  }
+}
+
+templ index() {
+  <!DOCTYPE html>
+  <html lang="pl">
+    <head>
+      <meta charset="UTF-8"/>
+    </head>
+    <body>
+      { children... }
+    </body>
+  </html>
+}
+
+
+templ descriptionPage(desc Description) {
+  @index() {
+    <main>
+      <section>
+        @description(desc)
+      </section>
+    </main>
+  }
+}
+
