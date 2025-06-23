@@ -1,10 +1,15 @@
 package main 
 
+import "strings"
+
 templ description(desc Description) {
   for _, section := range desc.Sections {
     <div class="row">
       for _, item := range section.Items {
-        <div class="item">
+        {{
+          typeClass := "item item-" + strings.ToLower(item.Type)
+        }}
+        <div class={typeClass}>
           switch item.Type {
             case "TEXT":
               @templ.Raw(item.Content)
@@ -22,6 +27,7 @@ templ index() {
   <html lang="pl">
     <head>
       <meta charset="UTF-8"/>
+      @styles()
     </head>
     <body>
       { children... }
@@ -32,11 +38,68 @@ templ index() {
 
 templ descriptionPage(desc Description) {
   @index() {
-    <main>
-      <section>
+    <div class="main">
+      <div class="section">
         @description(desc)
-      </section>
-    </main>
+      </div>
+    </div>
   }
 }
 
+templ styles() {
+  <style>
+  * {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  .row {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+  }
+  
+  .item {
+      flex: 1 1 0;
+  }
+
+  .item-text {
+      padding: 10px;
+  }
+
+  .item-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .main {
+      display: flex;
+      align-items: top;
+      max-width: 1000px;
+      margin: auto;
+  }
+  
+  .section {
+      flex: 1 1 0;
+  }
+  
+  img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+  }
+  
+  .drop-file {
+      border: 2px dashed #ccc;
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+  }
+  
+  .drop-file.dragging {
+      border-color: aquamarine;
+  }
+  </style>
+}
